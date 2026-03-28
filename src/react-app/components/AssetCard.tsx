@@ -1,21 +1,28 @@
+import StatusBadge from './StatusBadge'
 import type { ContentAsset } from '../lib/types'
 
 type Props = {
   item: ContentAsset
-  onApprove: (id: string) => void
-  onReject: (id: string) => void
+  onApprove?: (id: string) => void
+  onReject?: (id: string) => void
 }
 
 export default function AssetCard({ item, onApprove, onReject }: Props) {
   return (
-    <div style={{ border: '1px solid #ddd', borderRadius: 12, padding: 16, marginBottom: 16 }}>
+    <div
+      style={{
+        border: '1px solid #ddd',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+        background: 'white',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
         <div>
           <strong>{item.platform}</strong> · {item.format}
         </div>
-        <div>
-          status: <strong>{item.status}</strong>
-        </div>
+        <StatusBadge status={item.status} />
       </div>
 
       <div style={{ marginTop: 12 }}>
@@ -33,14 +40,22 @@ export default function AssetCard({ item, onApprove, onReject }: Props) {
         <div>{item.cta || '—'}</div>
       </div>
 
-      <div style={{ marginTop: 12 }}>
+      <div style={{ marginTop: 12, fontSize: 14 }}>
         quality: <strong>{item.quality_score}</strong> | risk: <strong>{item.risk_score}</strong>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-        <button onClick={() => onApprove(item.id)}>Approve</button>
-        <button onClick={() => onReject(item.id)}>Reject</button>
-      </div>
+      {item.review_notes && (
+        <div style={{ marginTop: 12, color: '#991B1B', fontSize: 14 }}>
+          <strong>Notes:</strong> {item.review_notes}
+        </div>
+      )}
+
+      {(onApprove || onReject) && (
+        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+          {onApprove && <button onClick={() => onApprove(item.id)}>Approve</button>}
+          {onReject && <button onClick={() => onReject(item.id)}>Reject</button>}
+        </div>
+      )}
     </div>
   )
 }

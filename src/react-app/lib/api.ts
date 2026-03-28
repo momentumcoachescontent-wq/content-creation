@@ -1,4 +1,4 @@
-import type { ContentAsset } from './types'
+import type { AssetSummaryResponse, ContentAsset } from './types'
 
 export async function getPendingAssets(): Promise<ContentAsset[]> {
   const res = await fetch('/api/assets/pending')
@@ -6,6 +6,24 @@ export async function getPendingAssets(): Promise<ContentAsset[]> {
 
   const json = await res.json()
   return json.items ?? []
+}
+
+export async function getAssets(status?: string): Promise<ContentAsset[]> {
+  const url = status ? `/api/assets?status=${encodeURIComponent(status)}` : '/api/assets'
+  const res = await fetch(url)
+
+  if (!res.ok) throw new Error('Failed to fetch assets')
+
+  const json = await res.json()
+  return json.items ?? []
+}
+
+export async function getAssetSummary(): Promise<AssetSummaryResponse> {
+  const res = await fetch('/api/assets/summary')
+
+  if (!res.ok) throw new Error('Failed to fetch asset summary')
+
+  return res.json()
 }
 
 export async function approveAsset(id: string) {
